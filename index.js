@@ -1,26 +1,16 @@
-const nodeMailer = require('nodemailer')
+const express = require('express');
+require('dotenv').config(); // Cargar las variables de entorno
+const app = express();
 
-const transporter = nodeMailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    }
-})
+// Middleware para parsear el body de las solicitudes POST
+app.use(express.json());
 
-let mail = {
-    from: process.env.EMAIL_USER,
-    to: 'ropibeb488@daypey.com',
-    subject: 'Prueba nodemailer',
-    text: 'Prueba email'
-}
+// Importar y usar las rutas
+const emailRoutes = require('./routes/email');
+app.use('/api', emailRoutes);
 
-transporter.sendMail(mail, (err, info) => {
-    if (err) {
-        console.log(err)
-    } else {
-        console.log('email enviado')
-    }
-})
+// Iniciar el servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+});
